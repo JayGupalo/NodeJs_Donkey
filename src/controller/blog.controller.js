@@ -1,25 +1,16 @@
 const Blog = require('./../models/blog.model');
-
 const { createBlogSchema } = require('../validations/blog.validations');
 
-const createBlog = async (req, res) => {
-  try {
-    const value = await createBlogSchema?.body.validateAsync(req.body);
-    await Blog.create(value);
+const catchAsync = require('../utils/catchAsync');
 
-    res.send({ success: true, message: 'Blog created successfully' });
-  } catch (error) {
-    res.send({ error: true, message: error });
-  }
-};
+const createBlog = catchAsync(async (req, res) => {
+  await Blog.createe(req.body);
+  res.send({ success: true, message: 'Blog creates ez' });
+});
 
-const getBlogs = async (req, res) => {
-  try {
-    const blogs = await Blog.find({});
-    res.json(blogs);
-  } catch (error) {
-    res.send({ error: true, message: error.message });
-  }
-};
+const getBlogs = catchAsync(async (req, res) => {
+  const blogs = await Blog.find({});
+  res.json(blogs);
+});
 
 module.exports = { createBlog, getBlogs };

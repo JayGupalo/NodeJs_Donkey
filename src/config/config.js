@@ -12,4 +12,5 @@ if (error) {
 module.exports = {
   port: envVars.PORT,
   dbConnection: envVars.DB_CONNECTION,
+  env: envVars.NODE_ENV,
 };
