@@ -1,30 +1,17 @@
 const express = require('express');
-const app = express();
-const http = require('http');
-const mongoose = require('mongoose');
-const blogRouter = require('./routes/blog.routes');
-const { getBlogs, createBlog } = require('./controller/blog.controller');
-const { errorHandler, errorConverter } = require('./middleware/error');
-const httpStatus = require('http-status');
-
+const app = require('./server');
 const config = require('./config/config');
-const ApiError = require('./utils/ApiError');
+const mongoose = require('mongoose');
+const http = require('http');
+const logger = require('./config/logger');
 
 mongoose.connect(config.dbConnection).then(() => {
   console.info('connected to database');
 });
 
-app.use(express.json());
-app.use(blogRouter);
-
-app.use((req, res, next) => {
-  next(new ApiError(httpStatus.default.NOT_FOUND, 'Not found'));
-});
-app.use(errorConverter);
-app.use(errorHandler);
-
-app.listen(config.port, () => {
-  console.info(`server listening to ${config.port}`);
+const httpServer = http.createServer(app);
+const server = httpServer.listen(config.port, () => {
+  logger.info(`server listening to ${config.port}`);
 });
 
 const exitHandler = () => {
@@ -44,3 +31,10 @@ const unExpectedErrorHandler = (error) => {
 
 process.on('uncaughtException', unExpectedErrorHandler);
 process.on('unHandledRejection', unExpectedErrorHandler);
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received');
+
+  if (server) {
+    server.close();
+  }
+});

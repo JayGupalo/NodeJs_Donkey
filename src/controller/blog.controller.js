@@ -4,7 +4,7 @@ const { createBlogSchema } = require('../validations/blog.validations');
 const catchAsync = require('../utils/catchAsync');
 
 const createBlog = catchAsync(async (req, res) => {
-  await Blog.createe(req.body);
+  await Blog.create(req.body);
   res.send({ success: true, message: 'Blog creates ez' });
 });
 
