@@ -5,9 +5,14 @@ const mongoose = require('mongoose');
 const http = require('http');
 const logger = require('./config/logger');
 
-mongoose.connect(config.dbConnection).then(() => {
-  console.info('connected to database');
-});
+mongoose
+  .connect(config.dbConnection)
+  .then(() => {
+    logger.info('connected to database');
+  })
+  .catch((err) => {
+    logger.error(err);
+  });
 
 const httpServer = http.createServer(app);
 const server = httpServer.listen(config.port, () => {
@@ -17,7 +22,7 @@ const server = httpServer.listen(config.port, () => {
 const exitHandler = () => {
   if (server) {
     server.close(() => {
-      console.log('Server closed');
+      logger.info('Server closed');
       process.exit(1);
     });
   } else {
@@ -25,14 +30,14 @@ const exitHandler = () => {
   }
 };
 const unExpectedErrorHandler = (error) => {
-  console.log(error);
+  logger.error(error);
   exitHandler();
 };
 
 process.on('uncaughtException', unExpectedErrorHandler);
 process.on('unHandledRejection', unExpectedErrorHandler);
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received');
+  logger.info('SIGTERM received');
 
   if (server) {
     server.close();

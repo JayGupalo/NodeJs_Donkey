@@ -1,12 +1,12 @@
 const joi = require('joi');
 require('dotenv').config();
 
-const envVarSchema = require('../validations/env.validations');
-
-const { value: envVars, error } = envVarSchema.validate(process.env);
+const { envValidation } = require('../validations');
+const logger = require('../config/logger');
+const { value: envVars, error } = envValidation.validate(process.env);
 
 if (error) {
-  console.log(error);
+  logger.error(error);
 }
 
 module.exports = {

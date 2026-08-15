@@ -3,8 +3,11 @@ const app = express();
 const blogRouter = require('./routes/blog.routes');
 const { errorHandler, errorConverter } = require('./middleware/error');
 const httpStatus = require('http-status');
-const config = require('./config/config');
 const ApiError = require('./utils/ApiError');
+const morgan = require('./config/morgan');
+
+app.use(morgan.successHnadler);
+app.use(morgan.errorHandler);
 
 app.use(express.json());
 app.use(blogRouter);
